@@ -333,7 +333,7 @@ tape('handles $ token', t => {
   t.deepEqual(new RegExpParser('at$'), expected)
 });
 
-tape('handles [] charcter class', t => {
+tape('handles [] character class', t => {
   t.plan(1);
   const expected = {
     text: '[a*f]',
@@ -378,7 +378,7 @@ tape('handles [] charcter class', t => {
   t.deepEqual(new RegExpParser('[a*f]'), expected)
 });
 
-tape('handles [^] charcter class', t => {
+tape('handles [^] negated character class', t => {
   t.plan(1);
   const expected = {
     text: '[^atf]',
@@ -540,4 +540,158 @@ tape('handles | alternative multiple', t => {
     ]
   };
   t.deepEqual(new RegExpParser('ad*|tg|t'), expected)
+});
+
+tape('handles () group', t => {
+  t.plan(1);
+  const expected = {
+      text: '(ast)',
+      content: [
+        {
+          text: '(ast)',
+          negativeLookahead: false,
+          positiveLookahead: false,
+          nonCapture: false,
+          content: [
+            {
+              text: 'a',
+              quantifier: {
+                min: 1,
+                max: 1,
+                text: null
+              }
+            },
+            {
+              text: 's',
+              quantifier: {
+                min: 1,
+                max: 1,
+                text: null
+              }
+            },
+            {
+              text: 't',
+              quantifier: {
+                min: 1,
+                max: 1,
+                text: null
+              }
+            }
+          ],
+          quantifier: {
+            min: 1,
+            max: 1,
+            text: null
+          }
+        }
+      ]
+    };
+  t.deepEqual(new RegExpParser('(ast)'), expected)
+});
+
+tape('handles () group when nested', t => {
+  t.plan(1);
+  const expected = {
+      text: '(as(q))',
+      content: [
+        {
+          text: '(as(q))',
+          negativeLookahead: false,
+          positiveLookahead: false,
+          nonCapture: false,
+          content: [
+            {
+              text: 'a',
+              quantifier: {
+                min: 1,
+                max: 1,
+                text: null
+              }
+            },
+            {
+              text: 's',
+              quantifier: {
+                min: 1,
+                max: 1,
+                text: null
+              }
+            },
+            {
+              text: '(q)',
+              negativeLookahead: false,
+              positiveLookahead: false,
+              nonCapture: false,
+              content: [
+                {
+                  text: 'q',
+                  quantifier: {
+                    min: 1,
+                    max: 1,
+                    text: null
+                  }
+                }
+              ],
+              quantifier: {
+                min: 1,
+                max: 1,
+                text: null
+              }
+            }
+          ],
+          quantifier: {
+            min: 1,
+            max: 1,
+            text: null
+          }
+        }
+      ]
+    };
+  t.deepEqual(new RegExpParser('(as(q))'), expected)
+});
+
+tape('handles (?!) group when negative lookahead', t => {
+  t.plan(1);
+  const expected = {
+      text: '(?!asq)',
+      content: [
+        {
+          text: '(?!asq)',
+          negativeLookahead: true,
+          positiveLookahead: false,
+          nonCapture: false,
+          content: [
+            {
+              text: 'a',
+              quantifier: {
+                min: 1,
+                max: 1,
+                text: null
+              }
+            },
+            {
+              text: 's',
+              quantifier: {
+                min: 1,
+                max: 1,
+                text: null
+              }
+            },
+            {
+              text: 'q',
+              quantifier: {
+                min: 1,
+                max: 1,
+                text: null
+              }
+            }
+          ],
+          quantifier: {
+            min: 1,
+            max: 1,
+            text: null
+          }
+        }
+      ]
+    };
+  t.deepEqual(new RegExpParser('(?!asq)'), expected)
 });
