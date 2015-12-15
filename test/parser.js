@@ -1,4 +1,5 @@
 import RegExpParser from '../lib/RegExParser';
+import { types } from '../lib/models/Meta';
 import tape from 'tape';
 
 tape('handles literal string', t => {
@@ -8,6 +9,7 @@ tape('handles literal string', t => {
       content: [
         {
           text: 'a',
+          content: 'a',
           quantifier: {
             min: 1,
             max: 1,
@@ -17,6 +19,7 @@ tape('handles literal string', t => {
         },
         {
           text: 's',
+          content: 's',
           quantifier: {
             min: 1,
             max: 1,
@@ -26,6 +29,7 @@ tape('handles literal string', t => {
         },
         {
           text: 't',
+          content: 't',
           quantifier: {
             min: 1,
             max: 1,
@@ -38,6 +42,158 @@ tape('handles literal string', t => {
   t.deepEqual(new RegExpParser('ast'), expected);
 });
 
+tape('handles being passed RegExp object', t => {
+  t.plan(1)
+  const expected = {
+      text: 'ast',
+      content: [
+        {
+          text: 'a',
+          content: 'a',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 's',
+          content: 's',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 't',
+          content: 't',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        }
+      ]
+    };
+  t.deepEqual(new RegExpParser(/ast/), expected);
+});
+
+tape('handles \\ making any character literal', t => {
+  t.plan(1);
+  const expected = {
+      text: 'a\\?',
+      content: [
+        {
+          text: 'a',
+          content: 'a',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: '\\?',
+          content: '?',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        }
+      ]
+    };
+  t.deepEqual(new RegExpParser('a\\?'), expected)
+});
+
+tape('handles \\s meta character - white-space', t => {
+  t.plan(1);
+  const expected = {
+      text: 'a\\ss',
+      content: [
+        {
+          text: 'a',
+          content: 'a',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: '\\s',
+          content: '\\s',
+          type: types.WHITE_SPACE,
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 's',
+          content: 's',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        }
+      ]
+    };
+  t.deepEqual(new RegExpParser('a\\ss'), expected)
+});
+
+tape('handles \\S meta character - non-white-space', t => {
+  t.plan(1);
+  const expected = {
+      text: 'a\\S*s',
+      content: [
+        {
+          text: 'a',
+          content: 'a',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: '\\S',
+          content: '\\S',
+          type: types.NON_WHITE_SPACE,
+          quantifier: {
+            min: 0,
+            max: null,
+            lazy: false,
+            text: '*'
+          }
+        },
+        {
+          text: 's',
+          content: 's',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        }
+      ]
+    };
+  t.deepEqual(new RegExpParser('a\\S*s'), expected)
+});
+
 tape('handles ? quantifier - greedy', t => {
   t.plan(1);
   const expected = {
@@ -45,6 +201,7 @@ tape('handles ? quantifier - greedy', t => {
     content: [
       {
         text: 'a',
+        content: 'a',
         quantifier: {
           min: 1,
           max: 1,
@@ -54,6 +211,7 @@ tape('handles ? quantifier - greedy', t => {
       },
       {
         text: 's',
+        content: 's',
         quantifier: {
           min: 0,
           max: 1,
@@ -63,6 +221,7 @@ tape('handles ? quantifier - greedy', t => {
       },
       {
         text: 't',
+        content: 't',
         quantifier: {
           min: 1,
           max: 1,
@@ -82,6 +241,7 @@ tape('handles ?? quantifier - lazy', t => {
     content: [
       {
         text: 'a',
+        content: 'a',
         quantifier: {
           min: 1,
           max: 1,
@@ -91,6 +251,7 @@ tape('handles ?? quantifier - lazy', t => {
       },
       {
         text: 's',
+        content: 's',
         quantifier: {
           min: 0,
           max: 1,
@@ -100,6 +261,7 @@ tape('handles ?? quantifier - lazy', t => {
       },
       {
         text: 't',
+        content: 't',
         quantifier: {
           min: 1,
           max: 1,
@@ -119,6 +281,7 @@ tape('handles * quantifier - greedy', t => {
     content: [
       {
         text: 'a',
+        content: 'a',
         quantifier: {
           min: 1,
           max: 1,
@@ -128,6 +291,7 @@ tape('handles * quantifier - greedy', t => {
       },
       {
         text: 's',
+        content: 's',
         quantifier: {
           min: 1,
           max: 1,
@@ -137,6 +301,7 @@ tape('handles * quantifier - greedy', t => {
       },
       {
         text: 't',
+        content: 't',
         quantifier: {
           min: 0,
           max: null,
@@ -156,6 +321,7 @@ tape('handles * quantifier - lazy', t => {
     content: [
       {
         text: 'a',
+        content: 'a',
         quantifier: {
           min: 1,
           max: 1,
@@ -165,6 +331,7 @@ tape('handles * quantifier - lazy', t => {
       },
       {
         text: 's',
+        content: 's',
         quantifier: {
           min: 1,
           max: 1,
@@ -174,6 +341,7 @@ tape('handles * quantifier - lazy', t => {
       },
       {
         text: 't',
+        content: 't',
         quantifier: {
           min: 0,
           max: null,
@@ -193,6 +361,7 @@ tape('handles + quantifier - greedy', t => {
     content: [
       {
         text: 'a',
+        content: 'a',
         quantifier: {
           min: 1,
           max: null,
@@ -202,6 +371,7 @@ tape('handles + quantifier - greedy', t => {
       },
       {
         text: 's',
+        content: 's',
         quantifier: {
           min: 1,
           max: 1,
@@ -211,6 +381,7 @@ tape('handles + quantifier - greedy', t => {
       },
       {
         text: 't',
+        content: 't',
         quantifier: {
           min: 1,
           max: 1,
@@ -230,6 +401,7 @@ tape('handles + quantifier - lazy', t => {
     content: [
       {
         text: 'a',
+        content: 'a',
         quantifier: {
           min: 1,
           max: null,
@@ -239,6 +411,7 @@ tape('handles + quantifier - lazy', t => {
       },
       {
         text: 's',
+        content: 's',
         quantifier: {
           min: 1,
           max: 1,
@@ -248,6 +421,7 @@ tape('handles + quantifier - lazy', t => {
       },
       {
         text: 't',
+        content: 't',
         quantifier: {
           min: 1,
           max: 1,
@@ -267,6 +441,7 @@ tape('handles {x} quantifier - greedy', t => {
     content: [
       {
         text: 'a',
+        content: 'a',
         quantifier: {
           min: 1,
           max: 1,
@@ -276,6 +451,7 @@ tape('handles {x} quantifier - greedy', t => {
       },
       {
         text: 's',
+        content: 's',
         quantifier: {
           min: 3,
           max: 3,
@@ -285,6 +461,7 @@ tape('handles {x} quantifier - greedy', t => {
       },
       {
         text: 't',
+        content: 't',
         quantifier: {
           min: 1,
           max: 1,
@@ -304,6 +481,7 @@ tape('handles {x} quantifier - lazy', t => {
     content: [
       {
         text: 'a',
+        content: 'a',
         quantifier: {
           min: 1,
           max: 1,
@@ -313,6 +491,7 @@ tape('handles {x} quantifier - lazy', t => {
       },
       {
         text: 's',
+        content: 's',
         quantifier: {
           min: 3,
           max: 3,
@@ -322,6 +501,7 @@ tape('handles {x} quantifier - lazy', t => {
       },
       {
         text: 't',
+        content: 't',
         quantifier: {
           min: 1,
           max: 1,
@@ -341,6 +521,7 @@ tape('handles {x,} quantifier - greedy', t => {
     content: [
       {
         text: 'a',
+        content: 'a',
         quantifier: {
           min: 1,
           max: 1,
@@ -350,6 +531,7 @@ tape('handles {x,} quantifier - greedy', t => {
       },
       {
         text: 's',
+        content: 's',
         quantifier: {
           min: 2,
           max: null,
@@ -359,6 +541,7 @@ tape('handles {x,} quantifier - greedy', t => {
       },
       {
         text: 't',
+        content: 't',
         quantifier: {
           min: 1,
           max: 1,
@@ -378,6 +561,7 @@ tape('handles {x,} quantifier - lazy', t => {
     content: [
       {
         text: 'a',
+        content: 'a',
         quantifier: {
           min: 1,
           max: 1,
@@ -387,6 +571,7 @@ tape('handles {x,} quantifier - lazy', t => {
       },
       {
         text: 's',
+        content: 's',
         quantifier: {
           min: 2,
           max: null,
@@ -396,6 +581,7 @@ tape('handles {x,} quantifier - lazy', t => {
       },
       {
         text: 't',
+        content: 't',
         quantifier: {
           min: 1,
           max: 1,
@@ -415,6 +601,7 @@ tape('handles {x,y} quantifier - greedy', t => {
     content: [
       {
         text: 'a',
+        content: 'a',
         quantifier: {
           min: 1,
           max: 1,
@@ -424,6 +611,7 @@ tape('handles {x,y} quantifier - greedy', t => {
       },
       {
         text: 's',
+        content: 's',
         quantifier: {
           min: 2,
           max: 190,
@@ -433,6 +621,7 @@ tape('handles {x,y} quantifier - greedy', t => {
       },
       {
         text: 't',
+        content: 't',
         quantifier: {
           min: 1,
           max: 1,
@@ -452,6 +641,7 @@ tape('handles {x,y} quantifier - lazy', t => {
     content: [
       {
         text: 'a',
+        content: 'a',
         quantifier: {
           min: 1,
           max: 1,
@@ -461,6 +651,7 @@ tape('handles {x,y} quantifier - lazy', t => {
       },
       {
         text: 's',
+        content: 's',
         quantifier: {
           min: 2,
           max: 190,
@@ -470,6 +661,7 @@ tape('handles {x,y} quantifier - lazy', t => {
       },
       {
         text: 't',
+        content: 't',
         quantifier: {
           min: 1,
           max: 1,
@@ -489,6 +681,7 @@ tape('handles ranges x-y', t => {
     content: [
       {
         text: 'a',
+        content: 'a',
         quantifier: {
           min: 1,
           max: 1,
@@ -509,6 +702,7 @@ tape('handles ranges x-y', t => {
       },
       {
         text: 't',
+        content: 't',
         quantifier: {
           min: 1,
           max: 1,
@@ -528,6 +722,7 @@ tape('handles x-y followed by quantifier', t => {
     content: [
       {
         text: 's',
+        content: 's',
         quantifier: {
           min: 1,
           max: 1,
@@ -537,6 +732,7 @@ tape('handles x-y followed by quantifier', t => {
       },
       {
         text: '-',
+        content: '-',
         quantifier: {
           min: 1,
           max: 1,
@@ -546,6 +742,7 @@ tape('handles x-y followed by quantifier', t => {
       },
       {
         text: 'w',
+        content: 'w',
         quantifier: {
           min: 0,
           max: 1,
@@ -568,6 +765,7 @@ tape('handles ^ token', t => {
       },
       {
         text: 'a',
+        content: 'a',
         quantifier: {
           min: 1,
           max: 1,
@@ -577,6 +775,7 @@ tape('handles ^ token', t => {
       },
       {
         text: 't',
+        content: 't',
         quantifier: {
           min: 1,
           max: 1,
@@ -596,6 +795,7 @@ tape('handles $ token', t => {
     content: [
       {
         text: 'a',
+        content: 'a',
         quantifier: {
           min: 1,
           max: 1,
@@ -605,6 +805,7 @@ tape('handles $ token', t => {
       },
       {
         text: 't',
+        content: 't',
         quantifier: {
           min: 1,
           max: 1,
@@ -631,6 +832,7 @@ tape('handles [] character class', t => {
         content: [
           {
             text: 'a',
+            content: 'a',
             quantifier: {
               min: 1,
               max: 1,
@@ -640,6 +842,7 @@ tape('handles [] character class', t => {
           },
           {
             text: '*',
+            content: '*',
             quantifier: {
               min: 1,
               max: 1,
@@ -649,6 +852,7 @@ tape('handles [] character class', t => {
           },
           {
             text: 'f',
+            content: 'f',
             quantifier: {
               min: 1,
               max: 1,
@@ -680,6 +884,7 @@ tape('handles [] character class containing range', t => {
         content: [
           {
             text: 'a',
+            content: 'a',
             quantifier: {
               min: 1,
               max: 1,
@@ -700,6 +905,7 @@ tape('handles [] character class containing range', t => {
           },
           {
             text: 'f',
+            content: 'f',
             quantifier: {
               min: 1,
               max: 1,
@@ -720,6 +926,58 @@ tape('handles [] character class containing range', t => {
   t.deepEqual(new RegExpParser('[aw-zf]'), expected)
 });
 
+tape('handles [] character class containing forced literal', t => {
+  t.plan(1);
+  const expected = {
+    text: '[a\\?f]',
+    content: [
+      {
+        text: '[a\\?f]',
+        negated: false,
+        content: [
+          {
+            text: 'a',
+            content: 'a',
+            quantifier: {
+              min: 1,
+              max: 1,
+              lazy: false,
+              text: null
+            }
+          },
+          {
+            text: '\\?',
+            content: '?',
+            quantifier: {
+              min: 1,
+              max: 1,
+              lazy: false,
+              text: null
+            }
+          },
+          {
+            text: 'f',
+            content: 'f',
+            quantifier: {
+              min: 1,
+              max: 1,
+              lazy: false,
+              text: null
+            }
+          }
+        ],
+        quantifier: {
+          min: 1,
+          max: 1,
+          lazy: false,
+          text: null
+        }
+      }
+    ]
+  };
+  t.deepEqual(new RegExpParser('[a\\?f]'), expected)
+});
+
 tape('handles [^] negated character class', t => {
   t.plan(1);
   const expected = {
@@ -731,6 +989,7 @@ tape('handles [^] negated character class', t => {
         content: [
           {
             text: 'a',
+            content: 'a',
             quantifier: {
               min: 1,
               max: 1,
@@ -740,6 +999,7 @@ tape('handles [^] negated character class', t => {
           },
           {
             text: 't',
+            content: 't',
             quantifier: {
               min: 1,
               max: 1,
@@ -749,6 +1009,7 @@ tape('handles [^] negated character class', t => {
           },
           {
             text: 'f',
+            content: 'f',
             quantifier: {
               min: 1,
               max: 1,
@@ -782,6 +1043,7 @@ tape('handles | alternative', t => {
             content: [
               {
                 text: 'a',
+                content: 'a',
                 quantifier: {
                   min: 1,
                   max: 1,
@@ -791,6 +1053,7 @@ tape('handles | alternative', t => {
               },
               {
                 text: 'd',
+                content: 'd',
                 quantifier: {
                   min: 0,
                   max: null,
@@ -805,6 +1068,7 @@ tape('handles | alternative', t => {
             content: [
               {
                 text: 't',
+                content: 't',
                 quantifier: {
                   min: 1,
                   max: 1,
@@ -834,6 +1098,7 @@ tape('handles | alternative multiple', t => {
             content: [
               {
                 text: 'a',
+                content: 'a',
                 quantifier: {
                   min: 1,
                   max: 1,
@@ -843,6 +1108,7 @@ tape('handles | alternative multiple', t => {
               },
               {
                 text: 'd',
+                content: 'd',
                 quantifier: {
                   min: 0,
                   max: null,
@@ -857,6 +1123,7 @@ tape('handles | alternative multiple', t => {
             content: [
               {
                 text: 't',
+                content: 't',
                 quantifier: {
                   min: 1,
                   max: 1,
@@ -866,6 +1133,7 @@ tape('handles | alternative multiple', t => {
               },
               {
                 text: 'g',
+                content: 'g',
                 quantifier: {
                   min: 1,
                   max: 1,
@@ -880,6 +1148,7 @@ tape('handles | alternative multiple', t => {
             content: [
               {
                 text: 't',
+                content: 't',
                 quantifier: {
                   min: 1,
                   max: 1,
@@ -909,6 +1178,7 @@ tape('handles () group', t => {
           content: [
             {
               text: 'a',
+              content: 'a',
               quantifier: {
                 min: 1,
                 max: 1,
@@ -918,6 +1188,7 @@ tape('handles () group', t => {
             },
             {
               text: 's',
+              content: 's',
               quantifier: {
                 min: 1,
                 max: 1,
@@ -927,6 +1198,7 @@ tape('handles () group', t => {
             },
             {
               text: 't',
+              content: 't',
               quantifier: {
                 min: 1,
                 max: 1,
@@ -960,6 +1232,7 @@ tape('handles () group when nested', t => {
           content: [
             {
               text: 'a',
+              content: 'a',
               quantifier: {
                 min: 1,
                 max: 1,
@@ -969,6 +1242,7 @@ tape('handles () group when nested', t => {
             },
             {
               text: 's',
+              content: 's',
               quantifier: {
                 min: 1,
                 max: 1,
@@ -984,6 +1258,7 @@ tape('handles () group when nested', t => {
               content: [
                 {
                   text: 'q',
+                  content: 'q',
                   quantifier: {
                     min: 1,
                     max: 1,
@@ -1025,6 +1300,7 @@ tape('handles (?!) group - negative lookahead', t => {
           content: [
             {
               text: 'a',
+              content: 'a',
               quantifier: {
                 min: 1,
                 max: 1,
@@ -1034,6 +1310,7 @@ tape('handles (?!) group - negative lookahead', t => {
             },
             {
               text: 's',
+              content: 's',
               quantifier: {
                 min: 1,
                 max: 1,
@@ -1043,6 +1320,7 @@ tape('handles (?!) group - negative lookahead', t => {
             },
             {
               text: 'q',
+              content: 'q',
               quantifier: {
                 min: 1,
                 max: 1,
@@ -1076,6 +1354,7 @@ tape('handles (?=) group - positive lookahead', t => {
           content: [
             {
               text: 'a',
+              content: 'a',
               quantifier: {
                 min: 1,
                 max: 1,
@@ -1085,6 +1364,7 @@ tape('handles (?=) group - positive lookahead', t => {
             },
             {
               text: 's',
+              content: 's',
               quantifier: {
                 min: 1,
                 max: 1,
@@ -1094,6 +1374,7 @@ tape('handles (?=) group - positive lookahead', t => {
             },
             {
               text: 'q',
+              content: 'q',
               quantifier: {
                 min: 1,
                 max: 1,
@@ -1127,6 +1408,7 @@ tape('handles (?:) group - non capture', t => {
           content: [
             {
               text: 'a',
+              content: 'a',
               quantifier: {
                 min: 1,
                 max: 1,
@@ -1136,6 +1418,7 @@ tape('handles (?:) group - non capture', t => {
             },
             {
               text: 's',
+              content: 's',
               quantifier: {
                 min: 1,
                 max: 1,
@@ -1145,6 +1428,7 @@ tape('handles (?:) group - non capture', t => {
             },
             {
               text: 'q',
+              content: 'q',
               quantifier: {
                 min: 1,
                 max: 1,
@@ -1163,4 +1447,81 @@ tape('handles (?:) group - non capture', t => {
       ]
     };
   t.deepEqual(new RegExpParser('(?:asq)'), expected)
+});
+
+
+tape.skip('complex example', t => {
+  t.plan(1);
+  const expected = {
+      text: 'hel{2}?[o0O]+.(wor{1,}ld)(?!\?)!',
+      content: [
+        {
+          text: 'h',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 'e',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 'l',
+          quantifier: {
+            min: 2,
+            max: 2,
+            lazy: true,
+            text: null
+          }
+        },
+        {
+          text: '[o0O]',
+          content: [
+            {
+              text: 'o',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            },
+            {
+              text: '0',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            },
+            {
+              text: 'O',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            }
+          ],
+          quantifier: {
+            min: 1,
+            max: null,
+            lazy: false,
+            text: null
+          }
+        },
+
+      ]
+    };
+  t.deepEqual(new RegExpParser('hel{2}[o0O]+.(wor{1,}ld)(?!\?)!'), expected)
 });
