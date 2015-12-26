@@ -697,6 +697,251 @@ tape('handles \\ddd meta character - octal', t => {
   });
 });
 
+tape('handles \\n meta character - new line', t => {
+  t.plan(2);
+  const expected = {
+      text: 'a\\ns',
+      content: [
+        {
+          text: 'a',
+          content: 'a',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: '\\n',
+          content: '\\n',
+          type: types.NEW_LINE,
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 's',
+          content: 's',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        }
+      ]
+    },
+    parsed = new RegExpParser('a\\ns');
+  t.deepEqual(parsed, expected);
+  t.deepEqual(convertToClassHierarchy(parsed), {
+    'RegExParser': [
+      { 'Literal': { 'String': [] } },
+      { 'Meta': { 'String': [] } },
+      { 'Literal': { 'String': [] } }
+    ]
+  });
+});
+
+tape('handles \\r meta character - return', t => {
+  t.plan(2);
+  const expected = {
+      text: 'a\\rg',
+      content: [
+        {
+          text: 'a',
+          content: 'a',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: '\\r',
+          content: '\\r',
+          type: types.RETURN,
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 'g',
+          content: 'g',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        }
+      ]
+    },
+    parsed = new RegExpParser('a\\rg');
+  t.deepEqual(parsed, expected);
+  t.deepEqual(convertToClassHierarchy(parsed), {
+    'RegExParser': [
+      { 'Literal': { 'String': [] } },
+      { 'Meta': { 'String': [] } },
+      { 'Literal': { 'String': [] } }
+    ]
+  });
+});
+
+tape('handles \\t meta character - tab', t => {
+  t.plan(2);
+  const expected = {
+      text: 'a\\tg',
+      content: [
+        {
+          text: 'a',
+          content: 'a',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: '\\t',
+          content: '\\t',
+          type: types.TAB,
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 'g',
+          content: 'g',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        }
+      ]
+    },
+    parsed = new RegExpParser('a\\tg');
+  t.deepEqual(parsed, expected);
+  t.deepEqual(convertToClassHierarchy(parsed), {
+    'RegExParser': [
+      { 'Literal': { 'String': [] } },
+      { 'Meta': { 'String': [] } },
+      { 'Literal': { 'String': [] } }
+    ]
+  });
+});
+
+tape('handles \\b meta character - word-boundary', t => {
+  t.plan(2);
+  const expected = {
+      text: 'a\\bg',
+      content: [
+        {
+          text: 'a',
+          content: 'a',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: '\\b',
+          content: '\\b',
+          type: types.WORD_BOUNDARY,
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 'g',
+          content: 'g',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        }
+      ]
+    },
+    parsed = new RegExpParser('a\\bg');
+  t.deepEqual(parsed, expected);
+  t.deepEqual(convertToClassHierarchy(parsed), {
+    'RegExParser': [
+      { 'Literal': { 'String': [] } },
+      { 'Meta': { 'String': [] } },
+      { 'Literal': { 'String': [] } }
+    ]
+  });
+});
+
+tape('handles \\B meta character - non-word-boundary', t => {
+  t.plan(2);
+  const expected = {
+      text: 'a\\Bg',
+      content: [
+        {
+          text: 'a',
+          content: 'a',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: '\\B',
+          content: '\\B',
+          type: types.NON_WORD_BOUNDARY,
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 'g',
+          content: 'g',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        }
+      ]
+    },
+    parsed = new RegExpParser('a\\Bg');
+  t.deepEqual(parsed, expected);
+  t.deepEqual(convertToClassHierarchy(parsed), {
+    'RegExParser': [
+      { 'Literal': { 'String': [] } },
+      { 'Meta': { 'String': [] } },
+      { 'Literal': { 'String': [] } }
+    ]
+  });
+});
+
 tape('handles ? quantifier - greedy', t => {
   t.plan(2);
   const expected = {
