@@ -14,54 +14,6 @@ const convertToClassHierarchy = (parsed) => {
   };
 }
 
-tape('handles literal string', t => {
-  t.plan(2)
-  const expected = {
-      text: 'ast',
-      content: [
-        {
-          text: 'a',
-          content: 'a',
-          quantifier: {
-            min: 1,
-            max: 1,
-            lazy: false,
-            text: null
-          }
-        },
-        {
-          text: 's',
-          content: 's',
-          quantifier: {
-            min: 1,
-            max: 1,
-            lazy: false,
-            text: null
-          }
-        },
-        {
-          text: 't',
-          content: 't',
-          quantifier: {
-            min: 1,
-            max: 1,
-            lazy: false,
-            text: null
-          }
-        }
-      ]
-    },
-    parsed = new RegExpParser('ast');
-  t.deepEqual(parsed, expected);
-  t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
-      { 'Literal': { 'String': [] } },
-      { 'Literal': { 'String': [] } },
-      { 'Literal': { 'String': [] } }
-    ]
-  });
-});
-
 tape('handles being passed RegExp object', t => {
   t.plan(2)
   const expected = {
@@ -100,6 +52,60 @@ tape('handles being passed RegExp object', t => {
       ]
     },
     parsed = new RegExpParser(/ast/);
+  t.deepEqual(parsed, expected);
+  t.deepEqual(convertToClassHierarchy(parsed), {
+    'RegExParser': [
+      { 'Literal': { 'String': [] } },
+      { 'Literal': { 'String': [] } },
+      { 'Literal': { 'String': [] } }
+    ]
+  });
+});
+
+tape('throws error if passed bad RegExp', t => {
+  t.plan(2)
+  t.throws(() => new RegExpParser('as('), SyntaxError);
+  t.throws(() => new RegExpParser('as(fgh[s]])?*'), SyntaxError);
+});
+
+tape('handles literal string', t => {
+  t.plan(2)
+  const expected = {
+      text: 'ast',
+      content: [
+        {
+          text: 'a',
+          content: 'a',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 's',
+          content: 's',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 't',
+          content: 't',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        }
+      ]
+    },
+    parsed = new RegExpParser('ast');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
     'RegExParser': [
@@ -1518,103 +1524,6 @@ tape('handles {x,y} quantifier - lazy', t => {
   });
 });
 
-tape('handles ranges x-y', t => {
-  t.plan(2);
-  const expected = {
-      text: 'as-wt',
-      content: [
-        {
-          text: 'a',
-          content: 'a',
-          quantifier: {
-            min: 1,
-            max: 1,
-            lazy: false,
-            text: null
-          }
-        },
-        {
-          text: 's-w',
-          start: 's',
-          end: 'w',
-          quantifier: {
-            min: 1,
-            max: 1,
-            lazy: false,
-            text: null
-          }
-        },
-        {
-          text: 't',
-          content: 't',
-          quantifier: {
-            min: 1,
-            max: 1,
-            lazy: false,
-            text: null
-          }
-        }
-      ]
-    },
-    parsed = new RegExpParser('as-wt');
-  t.deepEqual(parsed, expected);
-  t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
-      { 'Literal': { 'String': [] } },
-      { 'Range': [] },
-      { 'Literal': { 'String': [] } }
-    ]
-  });
-});
-
-tape('handles x-y followed by quantifier', t => {
-  t.plan(2);
-  const expected = {
-      text: 's-w?',
-      content: [
-        {
-          text: 's',
-          content: 's',
-          quantifier: {
-            min: 1,
-            max: 1,
-            lazy: false,
-            text: null
-          }
-        },
-        {
-          text: '-',
-          content: '-',
-          quantifier: {
-            min: 1,
-            max: 1,
-            lazy: false,
-            text: null
-          }
-        },
-        {
-          text: 'w',
-          content: 'w',
-          quantifier: {
-            min: 0,
-            max: 1,
-            lazy: false,
-            text: '?'
-          }
-        }
-      ]
-    },
-    parsed = new RegExpParser('s-w?');
-  t.deepEqual(parsed, expected);
-  t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
-      { 'Literal': { 'String': [] } },
-      { 'Literal': { 'String': [] } },
-      { 'Literal': { 'String': [] } }
-    ]
-  });
-});
-
 tape('handles ^ token', t => {
   t.plan(2);
   const expected = {
@@ -1761,13 +1670,186 @@ tape('handles [] character class', t => {
   });
 });
 
+tape('handles [] character class - terminates earliest', t => {
+  t.plan(2);
+  const expected = {
+      text: '[a*f]j]',
+      content: [
+        {
+          text: '[a*f]',
+          negated: false,
+          content: [
+            {
+              text: 'a',
+              content: 'a',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            },
+            {
+              text: '*',
+              content: '*',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            },
+            {
+              text: 'f',
+              content: 'f',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            }
+          ],
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 'j',
+          content: 'j',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: ']',
+          content: ']',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        }
+
+      ]
+    },
+    parsed = new RegExpParser('[a*f]j]');
+  t.deepEqual(parsed, expected);
+  t.deepEqual(convertToClassHierarchy(parsed), {
+    'RegExParser': [
+      {
+        'CharacterClass': [
+          { 'Literal': { 'String': [] } },
+          { 'Literal': { 'String': [] } },
+          { 'Literal': { 'String': [] } }
+        ]
+      },
+      { 'Literal': { 'String': [] } },
+      { 'Literal': { 'String': [] } }
+    ]
+  });
+});
+
+tape('handles [] character class - terminates earliest unless escaped', t => {
+  t.plan(2);
+  const expected = {
+      text: '[a*f\\]j]',
+      content: [
+        {
+          text: '[a*f\\]j]',
+          negated: false,
+          content: [
+            {
+              text: 'a',
+              content: 'a',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            },
+            {
+              text: '*',
+              content: '*',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            },
+            {
+              text: 'f',
+              content: 'f',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            },
+            {
+              text: '\\]',
+              content: ']',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            },
+            {
+              text: 'j',
+              content: 'j',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            }
+          ],
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        }
+      ]
+    },
+    parsed = new RegExpParser('[a*f\\]j]');
+  t.deepEqual(parsed, expected);
+  t.deepEqual(convertToClassHierarchy(parsed), {
+    'RegExParser': [
+      {
+        'CharacterClass': [
+          { 'Literal': { 'String': [] } },
+          { 'Literal': { 'String': [] } },
+          { 'Literal': { 'String': [] } },
+          { 'Literal': { 'String': [] } },
+          { 'Literal': { 'String': [] } }
+        ]
+      }
+    ]
+  });
+});
+
 tape('handles [] character class containing range', t => {
   t.plan(2);
   const expected = {
-      text: '[aw-zf]',
+      text: '[aw-z?f]',
       content: [
         {
-          text: '[aw-zf]',
+          text: '[aw-z?f]',
           negated: false,
           content: [
             {
@@ -1784,6 +1866,16 @@ tape('handles [] character class containing range', t => {
               text: 'w-z',
               start: 'w',
               end: 'z',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            },
+            {
+              text: '?',
+              content: '?',
               quantifier: {
                 min: 1,
                 max: 1,
@@ -1811,7 +1903,7 @@ tape('handles [] character class containing range', t => {
         }
       ]
     },
-    parsed = new RegExpParser('[aw-zf]');
+    parsed = new RegExpParser('[aw-z?f]');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
     'RegExParser': [
@@ -1819,6 +1911,7 @@ tape('handles [] character class containing range', t => {
         'CharacterClass': [
           { 'Literal': { 'String': [] } },
           { 'Range': [] },
+          { 'Literal': { 'String': [] } },
           { 'Literal': { 'String': [] } }
         ]
       }
