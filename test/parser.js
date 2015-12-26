@@ -1826,6 +1826,71 @@ tape('handles [] character class containing range', t => {
   });
 });
 
+tape('handles [] character class containing backspace', t => {
+  t.plan(2);
+  const expected = {
+      text: '[a\\bf]',
+      content: [
+        {
+          text: '[a\\bf]',
+          negated: false,
+          content: [
+            {
+              text: 'a',
+              content: 'a',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            },
+            {
+              text: '\\b',
+              content: '\\b',
+              type: types.BACK_SPACE,
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            },
+            {
+              text: 'f',
+              content: 'f',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            }
+          ],
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        }
+      ]
+    },
+    parsed = new RegExpParser('[a\\bf]');
+  t.deepEqual(parsed, expected);
+  t.deepEqual(convertToClassHierarchy(parsed), {
+    'RegExParser': [
+      {
+        'CharacterClass': [
+          { 'Literal': { 'String': [] } },
+          { 'Meta': { 'String' : [] } },
+          { 'Literal': { 'String': [] } }
+        ]
+      }
+    ]
+  });
+});
+
 tape('handles [] character class containing forced literal', t => {
   t.plan(2);
   const expected = {
