@@ -588,6 +588,115 @@ tape('handles \\xYY meta character - hex (YY)', t => {
   });
 });
 
+tape('handles \\cY meta character - control', t => {
+  t.plan(2);
+  const expected = {
+      text: 'a\\c3as',
+      content: [
+        {
+          text: 'a',
+          content: 'a',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: '\\c3',
+          content: '3',
+          type: types.CONTROL,
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 'a',
+          content: 'a',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 's',
+          content: 's',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        }
+      ]
+    },
+    parsed = new RegExpParser('a\\c3as');
+  t.deepEqual(parsed, expected);
+  t.deepEqual(convertToClassHierarchy(parsed), {
+    'RegExParser': [
+      { 'Literal': { 'String': [] } },
+      { 'Meta': { 'String': [] } },
+      { 'Literal': { 'String': [] } },
+      { 'Literal': { 'String': [] } }
+    ]
+  });
+});
+
+tape('handles \\ddd meta character - octal', t => {
+  t.plan(2);
+  const expected = {
+      text: 'a\\010s',
+      content: [
+        {
+          text: 'a',
+          content: 'a',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: '\\010',
+          content: '010',
+          type: types.OCTAL,
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        },
+        {
+          text: 's',
+          content: 's',
+          quantifier: {
+            min: 1,
+            max: 1,
+            lazy: false,
+            text: null
+          }
+        }
+      ]
+    },
+    parsed = new RegExpParser('a\\010s');
+  t.deepEqual(parsed, expected);
+  t.deepEqual(convertToClassHierarchy(parsed), {
+    'RegExParser': [
+      { 'Literal': { 'String': [] } },
+      { 'Meta': { 'String': [] } },
+      { 'Literal': { 'String': [] } }
+    ]
+  });
+});
+
 tape('handles ? quantifier - greedy', t => {
   t.plan(2);
   const expected = {
@@ -2130,7 +2239,7 @@ tape('handles (?:) group - non capture', t => {
   });
 });
 
-tape('handles \n group reference', t => {
+tape('handles \\n group reference', t => {
   t.plan(2);
   const expected = {
       text: '(ptn)-\\1{3,6}',
@@ -2219,7 +2328,7 @@ tape('handles \n group reference', t => {
   });
 });
 
-tape('handles \n group reference - multiple figures', t => {
+tape('handles \\n group reference - multiple figures', t => {
   t.plan(2);
   const expected = {
       text: '(p((t)(n)))((w)((h)(a))(t(!)))-\\11',
@@ -2552,7 +2661,6 @@ tape('handles \n group reference - multiple figures', t => {
     ]
   });
 });
-
 
 tape('complex example', t => {
   t.plan(2);
