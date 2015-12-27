@@ -1,4 +1,4 @@
-import RegExpParser from '../lib/RegExParser';
+import RegExpParser from '../lib/RegExpParser';
 import { types } from '../lib/models/Meta';
 import tape from 'tape';
 

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "babel-tape-runner test/*.js"
+    "test": "babel-tape-runner test/*.spec.js"
   },
   "dependencies": {},
   "author": "",
