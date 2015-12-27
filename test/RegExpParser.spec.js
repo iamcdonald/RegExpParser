@@ -1,6 +1,6 @@
+import tape from 'tape';
 import RegExpParser from '../lib/RegExpParser';
 import { types } from '../lib/models/Meta';
-import tape from 'tape';
 
 const convertToClassHierarchy = (parsed) => {
   let { content = [] } = parsed;
@@ -54,7 +54,7 @@ tape('handles being passed RegExp object', t => {
     parsed = new RegExpParser(/ast/);
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -108,7 +108,7 @@ tape('handles literal string', t => {
     parsed = new RegExpParser('ast');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -146,7 +146,7 @@ tape('handles \\ making any character literal', t => {
     parsed = new RegExpParser('a\\?');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
     ]
@@ -194,7 +194,7 @@ tape('handles . meta character - anything', t => {
     parsed = new RegExpParser('a.s');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -243,7 +243,7 @@ tape('handles \\s meta character - white-space', t => {
     parsed = new RegExpParser('a\\ss');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -292,7 +292,7 @@ tape('handles \\S meta character - non-white-space', t => {
     parsed = new RegExpParser('a\\S*s');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -341,7 +341,7 @@ tape('handles \\w meta character - word-char', t => {
     parsed = new RegExpParser('a\\ws');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -390,7 +390,7 @@ tape('handles \\W meta character - non-word-char', t => {
     parsed = new RegExpParser('a\\W*s');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -439,7 +439,7 @@ tape('handles \\d meta character - digit', t => {
     parsed = new RegExpParser('a\\ds');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -488,7 +488,7 @@ tape('handles \\D meta character - non-digit', t => {
     parsed = new RegExpParser('a\\D*s');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -537,7 +537,7 @@ tape('handles \\uYYYY meta character - hex (YYYY)', t => {
     parsed = new RegExpParser('a\\u1923?s');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -586,7 +586,7 @@ tape('handles \\xYY meta character - hex (YY)', t => {
     parsed = new RegExpParser('a\\x3as');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -645,7 +645,7 @@ tape('handles \\cY meta character - control', t => {
     parsed = new RegExpParser('a\\c3as');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } },
@@ -695,7 +695,7 @@ tape('handles \\ddd meta character - octal', t => {
     parsed = new RegExpParser('a\\010s');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -744,7 +744,7 @@ tape('handles \\n meta character - new line', t => {
     parsed = new RegExpParser('a\\ns');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -793,7 +793,7 @@ tape('handles \\r meta character - return', t => {
     parsed = new RegExpParser('a\\rg');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -842,7 +842,7 @@ tape('handles \\t meta character - tab', t => {
     parsed = new RegExpParser('a\\tg');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -891,7 +891,7 @@ tape('handles \\b meta character - word-boundary', t => {
     parsed = new RegExpParser('a\\bg');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -940,7 +940,7 @@ tape('handles \\B meta character - non-word-boundary', t => {
     parsed = new RegExpParser('a\\Bg');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Meta': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -988,7 +988,7 @@ tape('handles ? quantifier - greedy', t => {
     parsed = new RegExpParser('as?t');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -1036,7 +1036,7 @@ tape('handles ?? quantifier - lazy', t => {
     parsed = new RegExpParser('as??t');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -1084,7 +1084,7 @@ tape('handles * quantifier - greedy', t => {
     parsed = new RegExpParser('ast*');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -1132,7 +1132,7 @@ tape('handles * quantifier - lazy', t => {
     parsed = new RegExpParser('ast*?');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -1180,7 +1180,7 @@ tape('handles + quantifier - greedy', t => {
     parsed = new RegExpParser('a+st');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -1228,7 +1228,7 @@ tape('handles + quantifier - lazy', t => {
     parsed = new RegExpParser('a+?st');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -1276,7 +1276,7 @@ tape('handles {x} quantifier - greedy', t => {
     parsed = new RegExpParser('as{3}t');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -1324,7 +1324,7 @@ tape('handles {x} quantifier - lazy', t => {
     parsed = new RegExpParser('as{3}?t');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -1372,7 +1372,7 @@ tape('handles {x,} quantifier - greedy', t => {
     parsed = new RegExpParser('as{2,}t');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -1420,7 +1420,7 @@ tape('handles {x,} quantifier - lazy', t => {
     parsed = new RegExpParser('as{2,}?t');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -1468,7 +1468,7 @@ tape('handles {x,y} quantifier - greedy', t => {
     parsed = new RegExpParser('as{2,190}t');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -1516,7 +1516,7 @@ tape('handles {x,y} quantifier - lazy', t => {
     parsed = new RegExpParser('as{2,190}?t');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -1557,7 +1557,7 @@ tape('handles ^ token', t => {
     parsed = new RegExpParser('^at');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Start': [] },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } }
@@ -1598,7 +1598,7 @@ tape('handles $ token', t => {
     parsed = new RegExpParser('at$');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'End': [] }
@@ -1658,7 +1658,7 @@ tape('handles [] character class', t => {
     parsed = new RegExpParser('[a*f]');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'CharacterClass': [
           { 'Literal': { 'String': [] } },
@@ -1743,7 +1743,7 @@ tape('handles [] character class - terminates earliest', t => {
     parsed = new RegExpParser('[a*f]j]');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'CharacterClass': [
           { 'Literal': { 'String': [] } },
@@ -1829,7 +1829,7 @@ tape('handles [] character class - terminates earliest unless escaped', t => {
     parsed = new RegExpParser('[a*f\\]j]');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'CharacterClass': [
           { 'Literal': { 'String': [] } },
@@ -1906,7 +1906,7 @@ tape('handles [] character class containing range', t => {
     parsed = new RegExpParser('[aw-z?f]');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'CharacterClass': [
           { 'Literal': { 'String': [] } },
@@ -1972,7 +1972,7 @@ tape('handles [] character class containing backspace', t => {
     parsed = new RegExpParser('[a\\bf]');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'CharacterClass': [
           { 'Literal': { 'String': [] } },
@@ -2036,7 +2036,7 @@ tape('handles [] character class containing forced literal', t => {
     parsed = new RegExpParser('[a\\?f]');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'CharacterClass': [
           { 'Literal': { 'String': [] } },
@@ -2100,7 +2100,7 @@ tape('handles [^] negated character class', t => {
     parsed = new RegExpParser('[^atf]');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'CharacterClass': [
           { 'Literal': { 'String': [] } },
@@ -2167,7 +2167,7 @@ tape('handles | alternative', t => {
     parsed = new RegExpParser('ad*|t')
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'Alternative': [
           { 'AlternativeOption': [
@@ -2265,7 +2265,7 @@ tape('handles | alternative multiple', t => {
     parsed = new RegExpParser('ad*|tg|t');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'Alternative': [
           { 'AlternativeOption': [
@@ -2343,7 +2343,7 @@ tape('handles () group', t => {
     parsed = new RegExpParser('(ast)');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'Group': [
           { 'Literal': { 'String': [] } },
@@ -2425,7 +2425,7 @@ tape('handles () group when nested', t => {
     parsed = new RegExpParser('(as(q))');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'Group': [
           { 'Literal': { 'String': [] } },
@@ -2496,7 +2496,7 @@ tape('handles (?!) group - negative lookahead', t => {
     parsed = new RegExpParser('(?!asq)');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'Group': [
           { 'Literal': { 'String': [] } },
@@ -2563,7 +2563,7 @@ tape('handles (?=) group - positive lookahead', t => {
     parsed = new RegExpParser('(?=asq)');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'Group': [
           { 'Literal': { 'String': [] } },
@@ -2630,7 +2630,7 @@ tape('handles (?:) group - non capture', t => {
     parsed = new RegExpParser('(?:asq)');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'Group': [
           { 'Literal': { 'String': [] } },
@@ -2717,7 +2717,7 @@ tape('handles \\n group reference', t => {
     parsed = new RegExpParser('(ptn)-\\1{3,6}');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'Group': [
           { 'Literal': { 'String': [] } },
@@ -3006,7 +3006,7 @@ tape('handles \\n group reference - multiple figures', t => {
     parsed = new RegExpParser('(p((t)(n)))((w)((h)(a))(t(!)))-\\11');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       {
         'Group': [
           { 'Literal': { 'String': [] } },
@@ -3273,7 +3273,7 @@ tape('complex example', t => {
     parsed = new RegExpParser('hel{2}?[o0O]+\\s(wor{1,}l(d)*?)(?!\\?)!');
   t.deepEqual(parsed, expected);
   t.deepEqual(convertToClassHierarchy(parsed), {
-    'RegExParser': [
+    'RegExpParser': [
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
       { 'Literal': { 'String': [] } },
