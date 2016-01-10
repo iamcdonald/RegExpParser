@@ -2476,7 +2476,6 @@ tape('RegExpParser', t => {
               negativeLookahead: true,
               positiveLookahead: false,
               nonCapture: false,
-              groupId: null,
               content: [
                 {
                   text: 'a',
@@ -2543,7 +2542,6 @@ tape('RegExpParser', t => {
               negativeLookahead: false,
               positiveLookahead: true,
               nonCapture: false,
-              groupId: null,
               content: [
                 {
                   text: 'a',
@@ -2610,7 +2608,6 @@ tape('RegExpParser', t => {
               negativeLookahead: false,
               positiveLookahead: false,
               nonCapture: true,
-              groupId: null,
               content: [
                 {
                   text: 'a',
@@ -3269,7 +3266,6 @@ tape('RegExpParser', t => {
             negativeLookahead: true,
             positiveLookahead: false,
             nonCapture: false,
-            groupId: null,
             content: [
               {
                 text: '\\?',
