@@ -4,7 +4,7 @@
   "description": "",
   "main": "./lib/RegExpParser.js",
   "scripts": {
-    "test": "babel-tape-runner test/*.spec.js | tap-min"
+    "test": "babel-tape-runner test/*.spec.js | tap-spec"
   },
   "dependencies": {},
   "author": "",
@@ -14,7 +14,7 @@
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-stage-0": "^6.3.13",
     "babel-tape-runner": "^2.0.0",
-    "tap-min": "^1.0.0",
+    "tap-spec": "^4.1.1",
     "tape": "^4.2.2"
   }
 }
