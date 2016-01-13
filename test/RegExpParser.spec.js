@@ -2310,6 +2310,143 @@ tape('RegExpParser', t => {
       });
     });
 
+    t.test('handles | alternative multiple', t => {
+      t.plan(2);
+      const expected = {
+          text: 'as|(sa){2,3}|[0-9]{5}',
+          content: [
+            {
+              text: 'as|(sa){2,3}|[0-9]{5}',
+              content: [
+                {
+                  text: 'as',
+                  content: [
+                    {
+                      text: 'a',
+                      content: 'a',
+                      quantifier: {
+                        min: 1,
+                        max: 1,
+                        lazy: false,
+                        text: null
+                      }
+                    },
+                    {
+                      text: 's',
+                      content: 's',
+                      quantifier: {
+                        min: 1,
+                        max: 1,
+                        lazy: false,
+                        text: null
+                      }
+                    }
+                  ]
+                },
+                {
+                  text: '(sa){2,3}',
+                  content: [
+                    {
+                      text: '(sa)',
+                      negativeLookahead: false,
+                      positiveLookahead: false,
+                      nonCapture: false,
+                      groupId: 1,
+                      content: [
+                        {
+                          text: 's',
+                          content: 's',
+                          quantifier: {
+                            min: 1,
+                            max: 1,
+                            lazy: false,
+                            text: null
+                          }
+                        },
+                        {
+                          text: 'a',
+                          content: 'a',
+                          quantifier: {
+                            min: 1,
+                            max: 1,
+                            lazy: false,
+                            text: null
+                          }
+                        }
+                      ],
+                      quantifier: {
+                        min: 2,
+                        max: 3,
+                        lazy: false,
+                        text: '{2,3}'
+                      }
+                    }
+                  ],
+                },
+                {
+                  text: '[0-9]{5}',
+                  content: [
+                    {
+                      text: '[0-9]',
+                      negated: false,
+                      content: [
+                        {
+                          text: '0-9',
+                          start: '0',
+                          end: '9',
+                          quantifier: {
+                            min: 1,
+                            max: 1,
+                            lazy: false,
+                            text: null
+                          }
+                        }
+                      ],
+                      quantifier: {
+                        min: 5,
+                        max: 5,
+                        lazy: false,
+                        text: '{5}'
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        parsed = new RegExpParser('as|(sa){2,3}|[0-9]{5}');
+      t.deepEqual(parsed, expected);
+      t.deepEqual(convertToClassHierarchy(parsed), {
+        'RegExpParser': [
+          {
+            'Alternative': [
+              { 'AlternativeOption': [
+                  { 'Literal': { 'String': [] } },
+                  { 'Literal': { 'String': [] } }
+                ]
+              },
+              { 'AlternativeOption': [
+                  { 'Group': [
+                      { 'Literal': { 'String': [] } },
+                      { 'Literal': { 'String': [] } }
+                    ]
+                  },
+                ]
+              },
+              { 'AlternativeOption': [
+                  { 'CharacterClass': [
+                      { 'Range': [] }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      });
+    });
+
   });
 
   t.test('group', t => {
