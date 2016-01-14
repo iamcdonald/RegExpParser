@@ -1,5 +1,5 @@
 import tape from 'tape';
-import RegExpParser from '../lib/RegExpParser';
+import RegExpParser, { metaTypes } from '../lib/RegExpParser';
 import { types } from '../lib/models/Meta';
 
 const convertToClassHierarchy = (parsed) => {
@@ -14,7 +14,13 @@ const convertToClassHierarchy = (parsed) => {
   };
 }
 
+
 tape('RegExpParser', t => {
+
+  t.test('exports meta types as metaTypes', t => {
+    t.plan(1);
+    t.equal(metaTypes, types);
+  });
 
   t.test('setup', t => {
 
