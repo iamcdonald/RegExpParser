@@ -1,26 +1,27 @@
 import tape from 'tape';
-import RegExpParser, { metaTypes } from '../lib/RegExpParser';
-import { types } from '../lib/models/Meta';
+import RegExpParser from '../lib/RegExpParser';
 
 const convertToClassHierarchy = (parsed) => {
-  let { content = [] } = parsed;
-  if (Array.isArray(content)) {
-    content = content.map(convertToClassHierarchy)
-  } else {
-    content = convertToClassHierarchy(content);
+  if (Array.isArray(parsed)) {
+    return parsed.map(convertToClassHierarchy);
+  }
+  let obj = ['content', 'start', 'end']
+            .reduce((obj, key) => {
+              if (parsed[key]) {
+                obj[key] = convertToClassHierarchy(parsed[key]);
+              }
+              return obj;
+            }, {});
+  if (!Object.keys(obj).length) {
+    return parsed.constructor.name;
   }
   return {
-    [parsed.constructor.name]: content
+    [parsed.constructor.name]: obj.content || obj
   };
 }
 
 
 tape('RegExpParser', t => {
-
-  t.test('exports meta types as metaTypes', t => {
-    t.plan(1);
-    t.equal(metaTypes, types);
-  });
 
   t.test('setup', t => {
 
@@ -65,9 +66,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -122,9 +123,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -160,8 +161,8 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -187,8 +188,6 @@ tape('RegExpParser', t => {
             },
             {
               text: '.',
-              content: '.',
-              type: types.ANY_CHAR,
               quantifier: {
                 min: 1,
                 max: 1,
@@ -212,9 +211,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          'AnyChar',
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -236,8 +235,6 @@ tape('RegExpParser', t => {
             },
             {
               text: '\\s',
-              content: '\\s',
-              type: types.WHITE_SPACE,
               quantifier: {
                 min: 1,
                 max: 1,
@@ -261,9 +258,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          'WhiteSpace',
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -285,8 +282,6 @@ tape('RegExpParser', t => {
             },
             {
               text: '\\S',
-              content: '\\S',
-              type: types.NON_WHITE_SPACE,
               quantifier: {
                 min: 0,
                 max: null,
@@ -310,9 +305,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          'NonWhiteSpace',
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -334,8 +329,6 @@ tape('RegExpParser', t => {
             },
             {
               text: '\\w',
-              content: '\\w',
-              type: types.WORD_CHAR,
               quantifier: {
                 min: 1,
                 max: 1,
@@ -359,9 +352,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          'WordChar',
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -383,8 +376,6 @@ tape('RegExpParser', t => {
             },
             {
               text: '\\W',
-              content: '\\W',
-              type: types.NON_WORD_CHAR,
               quantifier: {
                 min: 0,
                 max: null,
@@ -408,9 +399,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          'NonWordChar',
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -432,8 +423,6 @@ tape('RegExpParser', t => {
             },
             {
               text: '\\d',
-              content: '\\d',
-              type: types.DIGIT,
               quantifier: {
                 min: 1,
                 max: 1,
@@ -457,9 +446,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          'Digit',
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -481,8 +470,6 @@ tape('RegExpParser', t => {
             },
             {
               text: '\\D',
-              content: '\\D',
-              type: types.NON_DIGIT,
               quantifier: {
                 min: 0,
                 max: null,
@@ -506,9 +493,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          'NonDigit',
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -531,7 +518,6 @@ tape('RegExpParser', t => {
             {
               text: '\\u1923',
               content: '1923',
-              type: types.HEX,
               quantifier: {
                 min: 0,
                 max: 1,
@@ -555,9 +541,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Hex': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -580,7 +566,6 @@ tape('RegExpParser', t => {
             {
               text: '\\x3a',
               content: '3a',
-              type: types.HEX,
               quantifier: {
                 min: 1,
                 max: 1,
@@ -604,9 +589,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Hex': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -629,7 +614,6 @@ tape('RegExpParser', t => {
             {
               text: '\\c3',
               content: '3',
-              type: types.CONTROL,
               quantifier: {
                 min: 1,
                 max: 1,
@@ -663,10 +647,10 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Control': 'String' },
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -689,7 +673,6 @@ tape('RegExpParser', t => {
             {
               text: '\\010',
               content: '010',
-              type: types.OCTAL,
               quantifier: {
                 min: 1,
                 max: 1,
@@ -713,9 +696,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Octal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -737,8 +720,6 @@ tape('RegExpParser', t => {
             },
             {
               text: '\\n',
-              content: '\\n',
-              type: types.NEW_LINE,
               quantifier: {
                 min: 1,
                 max: 1,
@@ -762,9 +743,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          'NewLine',
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -786,8 +767,6 @@ tape('RegExpParser', t => {
             },
             {
               text: '\\r',
-              content: '\\r',
-              type: types.RETURN,
               quantifier: {
                 min: 1,
                 max: 1,
@@ -811,9 +790,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          'Return',
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -835,8 +814,6 @@ tape('RegExpParser', t => {
             },
             {
               text: '\\t',
-              content: '\\t',
-              type: types.TAB,
               quantifier: {
                 min: 1,
                 max: 1,
@@ -860,9 +837,95 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          'Tab',
+          { 'Literal': 'String' }
+        ]
+      });
+    });
+
+  });
+
+  t.test('anchors', t => {
+
+    t.test('handles ^ - start token', t => {
+      t.plan(2);
+      const expected = {
+          text: '^at',
+          content: [
+            {
+              text: '^'
+            },
+            {
+              text: 'a',
+              content: 'a',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            },
+            {
+              text: 't',
+              content: 't',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            }
+          ]
+        },
+        parsed = new RegExpParser('^at');
+      t.deepEqual(parsed, expected);
+      t.deepEqual(convertToClassHierarchy(parsed), {
+        'RegExpParser': [
+          'Start',
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
+        ]
+      });
+    });
+
+    t.test('handles $  - end token', t => {
+      t.plan(2);
+      const expected = {
+          text: 'at$',
+          content: [
+            {
+              text: 'a',
+              content: 'a',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            },
+            {
+              text: 't',
+              content: 't',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            },
+            {
+              text: '$'
+            }
+          ]
+        },
+        parsed = new RegExpParser('at$');
+      t.deepEqual(parsed, expected);
+      t.deepEqual(convertToClassHierarchy(parsed), {
+        'RegExpParser': [
+          { 'Literal': 'String' },
+          { 'Literal': 'String' },
+          'End'
         ]
       });
     });
@@ -883,15 +946,7 @@ tape('RegExpParser', t => {
               }
             },
             {
-              text: '\\b',
-              content: '\\b',
-              type: types.WORD_BOUNDARY,
-              quantifier: {
-                min: 1,
-                max: 1,
-                lazy: false,
-                text: null
-              }
+              text: '\\b'
             },
             {
               text: 'g',
@@ -909,9 +964,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          'WordBoundary',
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -932,15 +987,7 @@ tape('RegExpParser', t => {
               }
             },
             {
-              text: '\\B',
-              content: '\\B',
-              type: types.NON_WORD_BOUNDARY,
-              quantifier: {
-                min: 1,
-                max: 1,
-                lazy: false,
-                text: null
-              }
+              text: '\\B'
             },
             {
               text: 'g',
@@ -958,9 +1005,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Meta': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          'NonWordBoundary',
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -1010,9 +1057,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -1058,9 +1105,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -1106,9 +1153,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -1154,9 +1201,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -1202,9 +1249,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -1250,9 +1297,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -1298,9 +1345,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -1346,9 +1393,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -1394,9 +1441,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -1442,9 +1489,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -1490,9 +1537,9 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -1538,95 +1585,13 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
 
-  });
-
-  t.test('handles ^ token', t => {
-    t.plan(2);
-    const expected = {
-        text: '^at',
-        content: [
-          {
-            text: '^'
-          },
-          {
-            text: 'a',
-            content: 'a',
-            quantifier: {
-              min: 1,
-              max: 1,
-              lazy: false,
-              text: null
-            }
-          },
-          {
-            text: 't',
-            content: 't',
-            quantifier: {
-              min: 1,
-              max: 1,
-              lazy: false,
-              text: null
-            }
-          }
-        ]
-      },
-      parsed = new RegExpParser('^at');
-    t.deepEqual(parsed, expected);
-    t.deepEqual(convertToClassHierarchy(parsed), {
-      'RegExpParser': [
-        { 'Start': [] },
-        { 'Literal': { 'String': [] } },
-        { 'Literal': { 'String': [] } }
-      ]
-    });
-  });
-
-  t.test('handles $ token', t => {
-    t.plan(2);
-    const expected = {
-        text: 'at$',
-        content: [
-          {
-            text: 'a',
-            content: 'a',
-            quantifier: {
-              min: 1,
-              max: 1,
-              lazy: false,
-              text: null
-            }
-          },
-          {
-            text: 't',
-            content: 't',
-            quantifier: {
-              min: 1,
-              max: 1,
-              lazy: false,
-              text: null
-            }
-          },
-          {
-            text: '$'
-          }
-        ]
-      },
-      parsed = new RegExpParser('at$');
-    t.deepEqual(parsed, expected);
-    t.deepEqual(convertToClassHierarchy(parsed), {
-      'RegExpParser': [
-        { 'Literal': { 'String': [] } },
-        { 'Literal': { 'String': [] } },
-        { 'End': [] }
-      ]
-    });
   });
 
   t.test('character class', t => {
@@ -1686,9 +1651,9 @@ tape('RegExpParser', t => {
         'RegExpParser': [
           {
             'CharacterClass': [
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } }
+              { 'Literal': 'String' },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' }
             ]
           }
         ]
@@ -1771,13 +1736,13 @@ tape('RegExpParser', t => {
         'RegExpParser': [
           {
             'CharacterClass': [
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } }
+              { 'Literal': 'String' },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' }
             ]
           },
-          { 'Literal': { 'String': [] } },
-          { 'Literal': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'Literal': 'String' }
         ]
       });
     });
@@ -1857,91 +1822,355 @@ tape('RegExpParser', t => {
         'RegExpParser': [
           {
             'CharacterClass': [
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } }
+              { 'Literal': 'String' },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' }
             ]
           }
         ]
       });
     });
 
-    t.test('handles [] character class containing range', t => {
-      t.plan(2);
-      const expected = {
-          text: '[aw-z?f]',
-          content: [
+    // t.test('handles [] character class containing range', t => {
+    //   t.plan(2);
+    //   const expected = {
+    //       text: '[aw-z?f]',
+    //       content: [
+    //         {
+    //           text: '[aw-z?f]',
+    //           negated: false,
+    //           content: [
+    //             {
+    //               text: 'a',
+    //               content: 'a',
+    //               quantifier: {
+    //                 min: 1,
+    //                 max: 1,
+    //                 lazy: false,
+    //                 text: null
+    //               }
+    //             },
+    //             {
+    //               text: 'w-z',
+    //               start: 'w',
+    //               end: 'z',
+    //               quantifier: {
+    //                 min: 1,
+    //                 max: 1,
+    //                 lazy: false,
+    //                 text: null
+    //               }
+    //             },
+    //             {
+    //               text: '?',
+    //               content: '?',
+    //               quantifier: {
+    //                 min: 1,
+    //                 max: 1,
+    //                 lazy: false,
+    //                 text: null
+    //               }
+    //             },
+    //             {
+    //               text: 'f',
+    //               content: 'f',
+    //               quantifier: {
+    //                 min: 1,
+    //                 max: 1,
+    //                 lazy: false,
+    //                 text: null
+    //               }
+    //             }
+    //           ],
+    //           quantifier: {
+    //             min: 1,
+    //             max: 1,
+    //             lazy: false,
+    //             text: null
+    //           }
+    //         }
+    //       ]
+    //     },
+    //     parsed = new RegExpParser('[aw-z?f]');
+    //   t.deepEqual(parsed, expected);
+    //   t.deepEqual(convertToClassHierarchy(parsed), {
+    //     'RegExpParser': [
+    //       {
+    //         'CharacterClass': [
+    //           { 'Literal': 'String' },
+    //           { 'Range': [] },
+    //           { 'Literal': 'String' },
+    //           { 'Literal': 'String' }
+    //         ]
+    //       }
+    //     ]
+    //   });
+    // });
+
+    t.test('range', t => {
+
+      t.test('handles plain chars', t => {
+        t.plan(2);
+        const expected = {
+            text: '[w-z]',
+            content: [
+              {
+                text: '[w-z]',
+                negated: false,
+                content: [
+                  {
+                    text: 'w-z',
+                    start: {
+                      text: 'w',
+                      content: 'w',
+                      quantifier: {
+                        min: 1,
+                        max: 1,
+                        lazy: false,
+                        text: null
+                      }
+                    },
+                    end: {
+                      text: 'z',
+                      content: 'z',
+                      quantifier: {
+                        min: 1,
+                        max: 1,
+                        lazy: false,
+                        text: null
+                      }
+                    },
+                    quantifier: {
+                      min: 1,
+                      max: 1,
+                      lazy: false,
+                      text: null
+                    }
+                  }
+                ],
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              }
+            ]
+          },
+          parsed = new RegExpParser('[w-z]');
+        t.deepEqual(parsed, expected);
+        t.deepEqual(convertToClassHierarchy(parsed), {
+          'RegExpParser': [
             {
-              text: '[aw-z?f]',
-              negated: false,
-              content: [
-                {
-                  text: 'a',
-                  content: 'a',
-                  quantifier: {
-                    min: 1,
-                    max: 1,
-                    lazy: false,
-                    text: null
-                  }
-                },
-                {
-                  text: 'w-z',
-                  start: 'w',
-                  end: 'z',
-                  quantifier: {
-                    min: 1,
-                    max: 1,
-                    lazy: false,
-                    text: null
-                  }
-                },
-                {
-                  text: '?',
-                  content: '?',
-                  quantifier: {
-                    min: 1,
-                    max: 1,
-                    lazy: false,
-                    text: null
-                  }
-                },
-                {
-                  text: 'f',
-                  content: 'f',
-                  quantifier: {
-                    min: 1,
-                    max: 1,
-                    lazy: false,
-                    text: null
+              'CharacterClass': [
+                { 'Range': {
+                    start: { 'Literal': 'String' },
+                    end: { 'Literal': 'String' }
                   }
                 }
-              ],
-              quantifier: {
-                min: 1,
-                max: 1,
-                lazy: false,
-                text: null
-              }
+              ]
             }
           ]
-        },
-        parsed = new RegExpParser('[aw-z?f]');
-      t.deepEqual(parsed, expected);
-      t.deepEqual(convertToClassHierarchy(parsed), {
-        'RegExpParser': [
-          {
-            'CharacterClass': [
-              { 'Literal': { 'String': [] } },
-              { 'Range': [] },
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } }
-            ]
-          }
-        ]
+        });
       });
+
+      t.test('handles hex chars', t => {
+        t.plan(2);
+        const expected = {
+            text: '[\\u0010-\\x30]',
+            content: [
+              {
+                text: '[\\u0010-\\x30]',
+                negated: false,
+                content: [
+                  {
+                    text: '\\u0010-\\x30',
+                    start: {
+                      text: '\\u0010',
+                      content: '0010',
+                      quantifier: {
+                        min: 1,
+                        max: 1,
+                        lazy: false,
+                        text: null
+                      }
+                    },
+                    end: {
+                      text: '\\x30',
+                      content: '30',
+                      quantifier: {
+                        min: 1,
+                        max: 1,
+                        lazy: false,
+                        text: null
+                      }
+                    },
+                    quantifier: {
+                      min: 1,
+                      max: 1,
+                      lazy: false,
+                      text: null
+                    }
+                  }
+                ],
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              }
+            ]
+          },
+          parsed = new RegExpParser('[\\u0010-\\x30]');
+        t.deepEqual(parsed, expected);
+        t.deepEqual(convertToClassHierarchy(parsed), {
+          'RegExpParser': [
+            {
+              'CharacterClass': [
+                { 'Range': {
+                    start: { 'Hex': 'String' },
+                    end: { 'Hex': 'String' }
+                  }
+                }
+              ]
+            }
+          ]
+        });
+      });
+
+      t.test('handles octal chars', t => {
+        t.plan(2);
+        const expected = {
+            text: '[\\090-\\100]',
+            content: [
+              {
+                text: '[\\090-\\100]',
+                negated: false,
+                content: [
+                  {
+                    text: '\\090-\\100',
+                    start: {
+                      text: '\\090',
+                      content: '090',
+                      quantifier: {
+                        min: 1,
+                        max: 1,
+                        lazy: false,
+                        text: null
+                      }
+                    },
+                    end: {
+                      text: '\\100',
+                      content: '100',
+                      quantifier: {
+                        min: 1,
+                        max: 1,
+                        lazy: false,
+                        text: null
+                      }
+                    },
+                    quantifier: {
+                      min: 1,
+                      max: 1,
+                      lazy: false,
+                      text: null
+                    }
+                  }
+                ],
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              }
+            ]
+          },
+          parsed = new RegExpParser('[\\090-\\100]');
+        t.deepEqual(parsed, expected);
+        t.deepEqual(convertToClassHierarchy(parsed), {
+          'RegExpParser': [
+            {
+              'CharacterClass': [
+                { 'Range': {
+                    start: { 'Octal': 'String' },
+                    end: { 'Octal': 'String' }
+                  }
+                }
+              ]
+            }
+          ]
+        });
+      });
+
+      t.test('handles control chars', t => {
+        t.plan(2);
+        const expected = {
+            text: '[\\cA-\\cF]',
+            content: [
+              {
+                text: '[\\cA-\\cF]',
+                negated: false,
+                content: [
+                  {
+                    text: '\\cA-\\cF',
+                    start: {
+                      text: '\\cA',
+                      content: 'A',
+                      quantifier: {
+                        min: 1,
+                        max: 1,
+                        lazy: false,
+                        text: null
+                      }
+                    },
+                    end: {
+                      text: '\\cF',
+                      content: 'F',
+                      quantifier: {
+                        min: 1,
+                        max: 1,
+                        lazy: false,
+                        text: null
+                      }
+                    },
+                    quantifier: {
+                      min: 1,
+                      max: 1,
+                      lazy: false,
+                      text: null
+                    }
+                  }
+                ],
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              }
+            ]
+          },
+          parsed = new RegExpParser('[\\cA-\\cF]');
+        t.deepEqual(parsed, expected);
+        t.deepEqual(convertToClassHierarchy(parsed), {
+          'RegExpParser': [
+            {
+              'CharacterClass': [
+                { 'Range': {
+                    start: { 'Control': 'String' },
+                    end: { 'Control': 'String' }
+                  }
+                }
+              ]
+            }
+          ]
+        });
+      });
+
     });
 
     t.test('handles [] character class containing backspace', t => {
@@ -1965,8 +2194,6 @@ tape('RegExpParser', t => {
                 },
                 {
                   text: '\\b',
-                  content: '\\b',
-                  type: types.BACK_SPACE,
                   quantifier: {
                     min: 1,
                     max: 1,
@@ -2000,9 +2227,9 @@ tape('RegExpParser', t => {
         'RegExpParser': [
           {
             'CharacterClass': [
-              { 'Literal': { 'String': [] } },
-              { 'Meta': { 'String' : [] } },
-              { 'Literal': { 'String': [] } }
+              { 'Literal': 'String' },
+              'BackSpace',
+              { 'Literal': 'String' }
             ]
           }
         ]
@@ -2064,9 +2291,9 @@ tape('RegExpParser', t => {
         'RegExpParser': [
           {
             'CharacterClass': [
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } }
+              { 'Literal': 'String' },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' }
             ]
           }
         ]
@@ -2128,9 +2355,9 @@ tape('RegExpParser', t => {
         'RegExpParser': [
           {
             'CharacterClass': [
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } }
+              { 'Literal': 'String' },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' }
             ]
           }
         ]
@@ -2199,12 +2426,12 @@ tape('RegExpParser', t => {
           {
             'Alternative': [
               { 'AlternativeOption': [
-                  { 'Literal': { 'String': [] } },
-                  { 'Literal': { 'String': [] } }
+                  { 'Literal': 'String' },
+                  { 'Literal': 'String' }
                 ]
               },
               { 'AlternativeOption': [
-                  { 'Literal': { 'String': [] } }
+                  { 'Literal': 'String' }
                 ]
               }
             ]
@@ -2297,17 +2524,17 @@ tape('RegExpParser', t => {
           {
             'Alternative': [
               { 'AlternativeOption': [
-                  { 'Literal': { 'String': [] } },
-                  { 'Literal': { 'String': [] } }
+                  { 'Literal': 'String' },
+                  { 'Literal': 'String' }
                 ]
               },
               { 'AlternativeOption': [
-                  { 'Literal': { 'String': [] } },
-                  { 'Literal': { 'String': [] } }
+                  { 'Literal': 'String' },
+                  { 'Literal': 'String' }
                 ]
               },
               { 'AlternativeOption': [
-                  { 'Literal': { 'String': [] } }
+                  { 'Literal': 'String' }
                 ]
               }
             ]
@@ -2316,7 +2543,7 @@ tape('RegExpParser', t => {
       });
     });
 
-    t.test('handles | alternative multiple', t => {
+    t.test('handles | alternative multiple - complex', t => {
       t.plan(2);
       const expected = {
           text: 'as|(sa){2,3}|[0-9]{5}',
@@ -2398,8 +2625,26 @@ tape('RegExpParser', t => {
                       content: [
                         {
                           text: '0-9',
-                          start: '0',
-                          end: '9',
+                          start: {
+                            text: '0',
+                            content: '0',
+                            quantifier: {
+                              min: 1,
+                              max: 1,
+                              lazy: false,
+                              text: null
+                            }
+                          },
+                          end: {
+                            text: '9',
+                            content: '9',
+                            quantifier: {
+                              min: 1,
+                              max: 1,
+                              lazy: false,
+                              text: null
+                            }
+                          },
                           quantifier: {
                             min: 1,
                             max: 1,
@@ -2428,21 +2673,25 @@ tape('RegExpParser', t => {
           {
             'Alternative': [
               { 'AlternativeOption': [
-                  { 'Literal': { 'String': [] } },
-                  { 'Literal': { 'String': [] } }
+                  { 'Literal': 'String' },
+                  { 'Literal': 'String' }
                 ]
               },
               { 'AlternativeOption': [
                   { 'Group': [
-                      { 'Literal': { 'String': [] } },
-                      { 'Literal': { 'String': [] } }
+                      { 'Literal': 'String' },
+                      { 'Literal': 'String' }
                     ]
                   },
                 ]
               },
               { 'AlternativeOption': [
                   { 'CharacterClass': [
-                      { 'Range': [] }
+                      { 'Range': {
+                          start: { 'Literal': 'String' },
+                          end: { 'Literal': 'String' }
+                        }
+                      }
                     ]
                   }
                 ]
@@ -2514,9 +2763,9 @@ tape('RegExpParser', t => {
         'RegExpParser': [
           {
             'Group': [
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } }
+              { 'Literal': 'String' },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' }
             ]
           }
         ]
@@ -2596,11 +2845,11 @@ tape('RegExpParser', t => {
         'RegExpParser': [
           {
             'Group': [
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' },
               {
                 'Group': [
-                  { 'Literal': { 'String': [] } }
+                  { 'Literal': 'String' }
                 ]
               }
             ]
@@ -2666,9 +2915,9 @@ tape('RegExpParser', t => {
         'RegExpParser': [
           {
             'Group': [
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } }
+              { 'Literal': 'String' },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' }
             ]
           }
         ]
@@ -2732,9 +2981,9 @@ tape('RegExpParser', t => {
         'RegExpParser': [
           {
             'Group': [
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } }
+              { 'Literal': 'String' },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' }
             ]
           }
         ]
@@ -2798,9 +3047,9 @@ tape('RegExpParser', t => {
         'RegExpParser': [
           {
             'Group': [
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } }
+              { 'Literal': 'String' },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' }
             ]
           }
         ]
@@ -2889,13 +3138,13 @@ tape('RegExpParser', t => {
         'RegExpParser': [
           {
             'Group': [
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } },
-              { 'Literal': { 'String': [] } }
+              { 'Literal': 'String' },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' }
             ]
           },
-          { 'Literal': { 'String': [] } },
-          { 'GroupRef': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'GroupRef': 'String' }
         ]
       });
     });
@@ -3178,17 +3427,17 @@ tape('RegExpParser', t => {
         'RegExpParser': [
           {
             'Group': [
-              { 'Literal': { 'String': [] } },
+              { 'Literal': 'String' },
               {
                 'Group': [
                   {
                     'Group': [
-                      { 'Literal': { 'String': [] } }
+                      { 'Literal': 'String' }
                     ]
                   },
                   {
                     'Group': [
-                      { 'Literal': { 'String': [] } }
+                      { 'Literal': 'String' }
                     ]
                   }
                 ]
@@ -3199,37 +3448,37 @@ tape('RegExpParser', t => {
             'Group': [
               {
                 'Group': [
-                  { 'Literal': { 'String': [] } }
+                  { 'Literal': 'String' }
                 ]
               },
               {
                 'Group': [
                   {
                     'Group': [
-                      { 'Literal': { 'String': [] } }
+                      { 'Literal': 'String' }
                     ]
                   },
                   {
                     'Group': [
-                      { 'Literal': { 'String': [] } }
+                      { 'Literal': 'String' }
                     ]
                   }
                 ]
               },
               {
                 'Group': [
-                  { 'Literal': { 'String': [] } },
+                  { 'Literal': 'String' },
                   {
                     'Group': [
-                      { 'Literal': { 'String': [] } }
+                      { 'Literal': 'String' }
                     ]
                   },
                 ]
               },
             ]
           },
-          { 'Literal': { 'String': [] } },
-          { 'GroupRef': { 'String': [] } }
+          { 'Literal': 'String' },
+          { 'GroupRef': 'String' }
         ]
       });
     });
@@ -3315,8 +3564,6 @@ tape('RegExpParser', t => {
           },
           {
             text: '\\s',
-            content: '\\s',
-            type: types.WHITE_SPACE,
             quantifier: {
               min: 1,
               max: 1,
@@ -3444,36 +3691,36 @@ tape('RegExpParser', t => {
     t.deepEqual(parsed, expected);
     t.deepEqual(convertToClassHierarchy(parsed), {
       'RegExpParser': [
-        { 'Literal': { 'String': [] } },
-        { 'Literal': { 'String': [] } },
-        { 'Literal': { 'String': [] } },
+        { 'Literal': 'String' },
+        { 'Literal': 'String' },
+        { 'Literal': 'String' },
         {
           'CharacterClass': [
-            { 'Literal': { 'String': [] } },
-            { 'Literal': { 'String': [] } },
-            { 'Literal': { 'String': [] } },
+            { 'Literal': 'String' },
+            { 'Literal': 'String' },
+            { 'Literal': 'String' },
           ]
         },
-        { 'Meta': { 'String': [] } },
+        'WhiteSpace',
         {
           'Group': [
-            { 'Literal': { 'String': [] } },
-            { 'Literal': { 'String': [] } },
-            { 'Literal': { 'String': [] } },
-            { 'Literal': { 'String': [] } },
+            { 'Literal': 'String' },
+            { 'Literal': 'String' },
+            { 'Literal': 'String' },
+            { 'Literal': 'String' },
             {
               'Group': [
-                { 'Literal': { 'String': [] } }
+                { 'Literal': 'String' }
               ]
             }
           ]
         },
         {
           'Group': [
-            { 'Literal': { 'String': [] } },
+            { 'Literal': 'String' },
           ]
         },
-        { 'Literal': { 'String': [] } }
+        { 'Literal': 'String' }
       ]
     });
   });
