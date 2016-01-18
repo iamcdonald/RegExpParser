@@ -656,51 +656,459 @@ tape('RegExpParser', t => {
     });
 
     t.test('handles \\ddd meta character - octal', t => {
-      t.plan(2);
-      const expected = {
-          text: 'a\\010s',
-          content: [
-            {
-              text: 'a',
-              content: 'a',
-              quantifier: {
-                min: 1,
-                max: 1,
-                lazy: false,
-                text: null
+
+      t.test('3 digits', t => {
+        t.test('ok', t => {
+          t.plan(2);
+          const expected = {
+            text: '\\010',
+            content: [
+              {
+                text: '\\010',
+                content: '010',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
               }
-            },
-            {
-              text: '\\010',
-              content: '010',
-              quantifier: {
-                min: 1,
-                max: 1,
-                lazy: false,
-                text: null
+            ]
+          },
+          parsed = new RegExpParser('\\010');
+          t.deepEqual(parsed, expected);
+          t.deepEqual(convertToClassHierarchy(parsed), {
+            'RegExpParser': [
+              { 'Octal': 'String' }
+            ]
+          });
+        });
+
+        t.test('at bounds (377)', t => {
+          t.plan(2);
+          const expected = {
+            text: '\\377',
+            content: [
+              {
+                text: '\\377',
+                content: '377',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
               }
-            },
-            {
-              text: 's',
-              content: 's',
-              quantifier: {
-                min: 1,
-                max: 1,
-                lazy: false,
-                text: null
+            ]
+          },
+          parsed = new RegExpParser('\\377');
+          t.deepEqual(parsed, expected);
+          t.deepEqual(convertToClassHierarchy(parsed), {
+            'RegExpParser': [
+              { 'Octal': 'String' }
+            ]
+          });
+        });
+
+        t.test('above bounds (> 377) - last figure higher than 7', t => {
+          t.plan(2);
+          const expected = {
+            text: '\\378',
+            content: [
+              {
+                text: '\\37',
+                content: '37',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              },
+              {
+                text: '8',
+                content: '8',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
               }
-            }
-          ]
-        },
-        parsed = new RegExpParser('a\\010s');
-      t.deepEqual(parsed, expected);
-      t.deepEqual(convertToClassHierarchy(parsed), {
-        'RegExpParser': [
-          { 'Literal': 'String' },
-          { 'Octal': 'String' },
-          { 'Literal': 'String' }
-        ]
+            ]
+          },
+          parsed = new RegExpParser('\\378');
+          t.deepEqual(parsed, expected);
+          t.deepEqual(convertToClassHierarchy(parsed), {
+            'RegExpParser': [
+              { 'Octal': 'String' },
+              { 'Literal': 'String' }
+            ]
+          });
+        });
+
+        t.test('above bounds (> 377) - second last figure higher than 7', t => {
+          t.plan(2);
+          const expected = {
+            text: '\\387',
+            content: [
+              {
+                text: '\\3',
+                content: '3',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              },
+              {
+                text: '8',
+                content: '8',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              },
+              {
+                text: '7',
+                content: '7',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              }
+            ]
+          },
+          parsed = new RegExpParser('\\387');
+          t.deepEqual(parsed, expected);
+          t.deepEqual(convertToClassHierarchy(parsed), {
+            'RegExpParser': [
+              { 'Octal': 'String' },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' }
+            ]
+          });
+        });
+
+        t.test('within bounds (> 377) - first figure between 0-7', t => {
+          t.plan(2);
+          const expected = {
+            text: '\\587',
+            content: [
+              {
+                text: '\\5',
+                content: '5',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              },
+              {
+                text: '8',
+                content: '8',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              },
+              {
+                text: '7',
+                content: '7',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              }
+            ]
+          },
+          parsed = new RegExpParser('\\587');
+          t.deepEqual(parsed, expected);
+          t.deepEqual(convertToClassHierarchy(parsed), {
+            'RegExpParser': [
+              { 'Octal': 'String' },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' }
+            ]
+          });
+        });
+
+        t.test('above bounds (> 377) - first figure higher than 7', t => {
+          t.plan(2);
+          const expected = {
+            text: '\\877',
+            content: [
+              {
+                text: '\\8',
+                content: '8',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              },
+              {
+                text: '7',
+                content: '7',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              },
+              {
+                text: '7',
+                content: '7',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              }
+            ]
+          },
+          parsed = new RegExpParser('\\877');
+          t.deepEqual(parsed, expected);
+          t.deepEqual(convertToClassHierarchy(parsed), {
+            'RegExpParser': [
+              { 'Literal': 'String' },
+              { 'Literal': 'String' },
+              { 'Literal': 'String' }
+            ]
+          });
+        });
       });
+
+      t.test('2 digits', t => {
+
+        t.test('ok', t => {
+
+          t.plan(2);
+          const expected = {
+            text: '\\01',
+            content: [
+              {
+                text: '\\01',
+                content: '01',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              }
+            ]
+          },
+          parsed = new RegExpParser('\\01');
+          t.deepEqual(parsed, expected);
+          t.deepEqual(convertToClassHierarchy(parsed), {
+            'RegExpParser': [
+              { 'Octal': 'String' }
+            ]
+          });
+        });
+
+        t.test('at bounds (77)', t => {
+
+          t.plan(2);
+          const expected = {
+            text: '\\77',
+            content: [
+              {
+                text: '\\77',
+                content: '77',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              }
+            ]
+          },
+          parsed = new RegExpParser('\\77');
+          t.deepEqual(parsed, expected);
+          t.deepEqual(convertToClassHierarchy(parsed), {
+            'RegExpParser': [
+              { 'Octal': 'String' }
+            ]
+          });
+        });
+
+        t.test('above bounds (> 77) - last figure higher than 7', t => {
+
+          t.plan(2);
+          const expected = {
+            text: '\\78',
+            content: [
+              {
+                text: '\\7',
+                content: '7',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              },
+              {
+                text: '8',
+                content: '8',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              }
+            ]
+          },
+          parsed = new RegExpParser('\\78');
+          t.deepEqual(parsed, expected);
+          t.deepEqual(convertToClassHierarchy(parsed), {
+            'RegExpParser': [
+              { 'Octal': 'String' },
+              { 'Literal': 'String' }
+            ]
+          });
+        });
+
+        t.test('above bounds (> 77) - first figure higher than 7', t => {
+
+          t.plan(2);
+          const expected = {
+            text: '\\87',
+            content: [
+              {
+                text: '\\8',
+                content: '8',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              },
+              {
+                text: '7',
+                content: '7',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              }
+            ]
+          },
+          parsed = new RegExpParser('\\87');
+          t.deepEqual(parsed, expected);
+          t.deepEqual(convertToClassHierarchy(parsed), {
+            'RegExpParser': [
+              { 'Literal': 'String' },
+              { 'Literal': 'String' }
+            ]
+          });
+        });
+      });
+
+      t.test('1 digit', t => {
+
+        t.test('ok', t => {
+
+          t.plan(2);
+          const expected = {
+            text: '\\1',
+            content: [
+              {
+                text: '\\1',
+                content: '1',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              }
+            ]
+          },
+          parsed = new RegExpParser('\\1');
+          t.deepEqual(parsed, expected);
+          t.deepEqual(convertToClassHierarchy(parsed), {
+            'RegExpParser': [
+              { 'Octal': 'String' }
+            ]
+          });
+        });
+
+        t.test('at bounds (7)', t => {
+
+          t.plan(2);
+          const expected = {
+            text: '\\7',
+            content: [
+              {
+                text: '\\7',
+                content: '7',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              }
+            ]
+          },
+          parsed = new RegExpParser('\\7');
+          t.deepEqual(parsed, expected);
+          t.deepEqual(convertToClassHierarchy(parsed), {
+            'RegExpParser': [
+              { 'Octal': 'String' }
+            ]
+          });
+        });
+
+        t.test('above bounds (> 7)', t => {
+
+          t.plan(2);
+          const expected = {
+            text: '\\8',
+            content: [
+              {
+                text: '\\8',
+                content: '8',
+                quantifier: {
+                  min: 1,
+                  max: 1,
+                  lazy: false,
+                  text: null
+                }
+              }
+            ]
+          },
+          parsed = new RegExpParser('\\8');
+          t.deepEqual(parsed, expected);
+          t.deepEqual(convertToClassHierarchy(parsed), {
+            'RegExpParser': [
+              { 'Literal': 'String' }
+            ]
+          });
+        });
+      });
+
     });
 
     t.test('handles \\n meta character - new line', t => {
@@ -2044,17 +2452,17 @@ tape('RegExpParser', t => {
       t.test('handles octal chars', t => {
         t.plan(2);
         const expected = {
-            text: '[\\090-\\100]',
+            text: '[\\70-\\100\\6-\\377]',
             content: [
               {
-                text: '[\\090-\\100]',
+                text: '[\\70-\\100\\6-\\377]',
                 negated: false,
                 content: [
                   {
-                    text: '\\090-\\100',
+                    text: '\\70-\\100',
                     start: {
-                      text: '\\090',
-                      content: '090',
+                      text: '\\70',
+                      content: '70',
                       quantifier: {
                         min: 1,
                         max: 1,
@@ -2065,6 +2473,35 @@ tape('RegExpParser', t => {
                     end: {
                       text: '\\100',
                       content: '100',
+                      quantifier: {
+                        min: 1,
+                        max: 1,
+                        lazy: false,
+                        text: null
+                      }
+                    },
+                    quantifier: {
+                      min: 1,
+                      max: 1,
+                      lazy: false,
+                      text: null
+                    }
+                  },
+                  {
+                    text: '\\6-\\377',
+                    start: {
+                      text: '\\6',
+                      content: '6',
+                      quantifier: {
+                        min: 1,
+                        max: 1,
+                        lazy: false,
+                        text: null
+                      }
+                    },
+                    end: {
+                      text: '\\377',
+                      content: '377',
                       quantifier: {
                         min: 1,
                         max: 1,
@@ -2089,12 +2526,17 @@ tape('RegExpParser', t => {
               }
             ]
           },
-          parsed = new RegExpParser('[\\090-\\100]');
+          parsed = new RegExpParser('[\\70-\\100\\6-\\377]');
         t.deepEqual(parsed, expected);
         t.deepEqual(convertToClassHierarchy(parsed), {
           'RegExpParser': [
             {
               'CharacterClass': [
+                { 'Range': {
+                    start: { 'Octal': 'String' },
+                    end: { 'Octal': 'String' }
+                  }
+                },
                 { 'Range': {
                     start: { 'Octal': 'String' },
                     end: { 'Octal': 'String' }
@@ -2172,6 +2614,70 @@ tape('RegExpParser', t => {
       });
 
     });
+
+    t.test('handles [] character class containing meta character', t => {
+      t.plan(2);
+      const expected = {
+          text: '[a\\sf]',
+          content: [
+            {
+              text: '[a\\sf]',
+              negated: false,
+              content: [
+                {
+                  text: 'a',
+                  content: 'a',
+                  quantifier: {
+                    min: 1,
+                    max: 1,
+                    lazy: false,
+                    text: null
+                  }
+                },
+                {
+                  text: '\\s',
+                  quantifier: {
+                    min: 1,
+                    max: 1,
+                    lazy: false,
+                    text: null
+                  }
+                },
+                {
+                  text: 'f',
+                  content: 'f',
+                  quantifier: {
+                    min: 1,
+                    max: 1,
+                    lazy: false,
+                    text: null
+                  }
+                }
+              ],
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            }
+          ]
+        },
+        parsed = new RegExpParser('[a\\sf]');
+      t.deepEqual(parsed, expected);
+      t.deepEqual(convertToClassHierarchy(parsed), {
+        'RegExpParser': [
+          {
+            'CharacterClass': [
+              { 'Literal': 'String' },
+              'WhiteSpace',
+              { 'Literal': 'String' }
+            ]
+          }
+        ]
+      });
+    });
+
 
     t.test('handles [] character class containing backspace', t => {
       t.plan(2);
@@ -3479,6 +3985,58 @@ tape('RegExpParser', t => {
           },
           { 'Literal': 'String' },
           { 'GroupRef': 'String' }
+        ]
+      });
+    });
+
+    t.test('falls back to meta character octal if no matching group', t => {
+      t.plan(2);
+      const expected = {
+          text: '\\1',
+          content: [
+            {
+              text: '\\1',
+              content: '1',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            }
+          ]
+        },
+        parsed = new RegExpParser('\\1');
+      t.deepEqual(parsed, expected);
+      t.deepEqual(convertToClassHierarchy(parsed), {
+        'RegExpParser': [
+          { 'Octal': 'String' }
+        ]
+      });
+    });
+
+    t.test('falls back to literal character if no matching group and invalid octal', t => {
+      t.plan(2);
+      const expected = {
+          text: '\\9',
+          content: [
+            {
+              text: '\\9',
+              content: '9',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            }
+          ]
+        },
+        parsed = new RegExpParser('\\9');
+      t.deepEqual(parsed, expected);
+      t.deepEqual(convertToClassHierarchy(parsed), {
+        'RegExpParser': [
+          { 'Literal': 'String' }
         ]
       });
     });
