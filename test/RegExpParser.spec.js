@@ -1290,7 +1290,7 @@ tape('RegExpParser', t => {
       t.deepEqual(parsed, expected);
       t.deepEqual(convertToClassHierarchy(parsed), {
         'RegExpParser': [
-          'Start',
+          'StartToken',
           { 'Literal': 'String' },
           { 'Literal': 'String' }
         ]
@@ -1333,7 +1333,7 @@ tape('RegExpParser', t => {
         'RegExpParser': [
           { 'Literal': 'String' },
           { 'Literal': 'String' },
-          'End'
+          'EndToken'
         ]
       });
     });
