@@ -1252,6 +1252,43 @@ tape('RegExpParser', t => {
       });
     });
 
+    t.test('handles \\v meta character - vertical white space', t => {
+      t.plan(2);
+      const expected = {
+          text: 't\\v',
+          content: [
+            {
+              text: 't',
+              content: 't',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            },
+            {
+              text: '\\v',
+              quantifier: {
+                min: 1,
+                max: 1,
+                lazy: false,
+                text: null
+              }
+            }
+          ]
+        },
+        parsed = new RegExpParser('t\\v');
+      t.deepEqual(parsed, expected);
+      t.deepEqual(convertToClassHierarchy(parsed), {
+        'RegExpParser': [
+          { 'Literal': 'String' },
+          'VerticalWhiteSpace',
+        ]
+      });
+    });
+
+
   });
 
   t.test('anchors', t => {
