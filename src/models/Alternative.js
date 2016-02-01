@@ -7,7 +7,7 @@ import { matchers as groupRefMatchers } from './GroupRef';
 import { matchers as literalMatchers } from './Literal';
 import { matchersWithoutBackSpace as metaMatchers } from './Meta';
 import { matchers as quantifierMatchers } from './Quantifier';
-import createParser from '../utils/parse';
+import createParserWithMatchers from '../utils/createParserWithMatchers';
 
 
 const alternativeMatchers = {
@@ -20,7 +20,7 @@ const alternativeMatchers = {
 let _parse;
 const parse = content => {
   if (!_parse) {
-    _parse = createParser([
+    _parse = createParserWithMatchers([
         alternativeMatchers,
         anchorMatchers,
         characterClassMatchers,

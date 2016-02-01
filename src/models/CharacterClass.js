@@ -3,10 +3,10 @@ import Quantifier from './Quantifier';
 import { matchers as literalMatchers } from './Literal';
 import { matchersWithoutAnyChar as metaMatchers } from './Meta';
 import { matchers as rangeMatchers } from './Range';
-import createParser from '../utils/parse';
+import createParserWithMatchers from '../utils/createParserWithMatchers';
 
 
-const parse = createParser([
+const parse = createParserWithMatchers([
     literalMatchers,
     metaMatchers,
     rangeMatchers

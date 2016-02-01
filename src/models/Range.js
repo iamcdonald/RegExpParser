@@ -1,6 +1,6 @@
 import Match from './base/Match';
 import Quantifier from './Quantifier';
-import createParser from '../utils/parse';
+import createParserWithMatchers from '../utils/createParserWithMatchers';
 import { matchers as controlMatchers } from './Meta/Control';
 import { matchers as hexMatchers } from './Meta/Hex';
 import { matchers as literalMatchers } from './Literal';
@@ -9,7 +9,7 @@ import { matchers as octalMatchers } from './Meta/Octal';
 let _parse;
 const parse = content => {
   if (!_parse) {
-    _parse = createParser([
+    _parse = createParserWithMatchers([
         controlMatchers,
         hexMatchers,
         octalMatchers,

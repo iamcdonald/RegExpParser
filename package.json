@@ -2,7 +2,7 @@
   "name": "RegExpParser",
   "version": "0.0.1",
   "description": "",
-  "main": "./lib/RegExpParser.js",
+  "main": "./src/RegExpParser.js",
   "scripts": {
     "test": "babel-tape-runner test/*.spec.js | tap-spec"
   },

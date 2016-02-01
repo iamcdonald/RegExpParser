@@ -1,5 +1,5 @@
 import tape from 'tape';
-import RegExpParser from '../lib/RegExpParser';
+import RegExpParser from '../src/RegExpParser';
 
 const convertToClassHierarchy = (parsed) => {
   if (Array.isArray(parsed)) {

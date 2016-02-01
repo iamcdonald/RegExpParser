@@ -1,7 +1,7 @@
 import Match from './base/Match';
 import Quantifier from './Quantifier';
 import * as groupIdGenerator from '../utils/groupIdGenerator';
-import MatchError from './error/MatchError';
+import MatchError from '../error/MatchError';
 
 export default class GroupRef extends Match {
 

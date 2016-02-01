@@ -7,7 +7,7 @@ import { matchers as groupRefMatchers } from './models/GroupRef';
 import { matchers as alternativeMatchers } from './models/Alternative';
 import { matchers as characterClassMatchers } from './models/CharacterClass';
 import { matchersWithoutBackSpace as metaMatchers } from './models/Meta';
-import createParser from './utils/parse';
+import createParserWithMatchers from './utils/createParserWithMatchers';
 import * as groupIdGenerator from './utils/groupIdGenerator';
 
 export { types as metaTypes } from './models/Meta';
@@ -15,7 +15,7 @@ export { types as metaTypes } from './models/Meta';
 let _parse;
 const parse = content => {
   if (!_parse) {
-    _parse = createParser([
+    _parse = createParserWithMatchers([
         alternativeMatchers,
         groupRefMatchers,
         metaMatchers,
